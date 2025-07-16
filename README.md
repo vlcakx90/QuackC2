@@ -1,7 +1,7 @@
 # QuackC2
 ### About
 My next Command and Control framework using lessons learned from [IronHelm](https://github.com/vlcakx90/IronHelm). 
-- Will use the  [C2 Comms Spec: OST-C2-Spec](https://github.com/rasta-mouse/ost-c2-spec?tab=readme-ov-file#link-pass-thru) for communication specification.
+- Will use the  [C2 Comms Spec: OST-C2-Spec](https://github.com/rasta-mouse/ost-c2-spec?tab=readme-ov-file#link-pass-thru) for communication/command specification.
 - Will generally follow the design of [Cobalt Strike](https://www.cobaltstrike.com/)
 - Will be partly or entirely written in Rust
 - Serve as a project for me to learn and have fun :)
@@ -69,14 +69,14 @@ Commands in YAML may look like
   Code: 0
   Arguments:
     - Key: source
-      DataType: 0
+	  DataType: 0
       Optional: false
     - Key: destination
-      DataType: 0
+	  DataType: 0
       Optional: false
-    - Key: force
-      DataType: 3
-      Optional: true
+	- Key: force
+	  DataType: 3
+	  Optional: true
 
 ###### C2 Comms Spec: OST-C2-Spec ######
 #FILE-COPY-REQ {
@@ -157,18 +157,21 @@ YAML file to hold configuration for DuckHouse, Egg, and Duck
 - set paths for listeners
 - format of Get/Post requests and where data is placed
 - sleep/jitter
-- stage (ex. module -> dll load)
-- post-ex (ex. amsi/etw disable, spawn-to )
-- Windows API Interaction (Kernel32, re-map Kernel32, Ntdll, re-map Ntdll, Direct Syscalls, Indirect Syscalls, API hashing)
+- stage (ex. module stomp-> dll load)
+- post-ex (ex. spawn-to)
 
-# Later Versions
-#### More Comm Protocols
+# Later Version Ideas
+#### Opsec
+- String encryption for Egg
+- Encrypt Duck
+- Sleep Obfuscation
+- Windows API interactions: re-map Kernel32, re-map Ntdll, Direct Syscalls, Indirect Syscalls, API hashing
+
+#### Comm Protocols
 - DNS over HTTPS
 - QUIC
 - WebSocket
-- ...
 
-#### More Opsec
-- Sleep Obfuscation
-- AMI/ETW Bypass
-- ...
+# Projects to learn from
+- [RustRedOps](https://github.com/joaoviictorti/RustRedOps?tab=readme-ov-file)
+- [OffensiveRust](https://github.com/trickster0/OffensiveRust)
