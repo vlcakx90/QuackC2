@@ -69,14 +69,14 @@ Commands in YAML may look like
   Code: 0
   Arguments:
     - Key: source
-	  DataType: 0
+      DataType: 0
       Optional: false
     - Key: destination
-	  DataType: 0
+      DataType: 0
       Optional: false
-	- Key: force
-	  DataType: 3
-	  Optional: true
+    - Key: force
+      DataType: 3
+      Optional: true
 
 ###### C2 Comms Spec: OST-C2-Spec ######
 #FILE-COPY-REQ {
