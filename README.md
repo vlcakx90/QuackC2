@@ -12,20 +12,19 @@ A Command and Control framework inspired by Cobalt Strike and expanding on exper
 |  Egg | Stager | Rust stager that loads the PIC DLL |
 |  Client | Client | Cross-platform Rust Desktop client for Teamserver |
 |  Waddle Script | Aggressor Script | Scripting new behavior (commands) using Lua |
-|  Build Scripts | NA | Python scripts for building source |
+|  Build Scripts | NA | Python scripts for building src projects |
 |  Profiles | C2 Profile | Profiles for configuring comm and src builds |
 
 
 ### Flow
-1. Client loads C2Profile and Waddle Scripts
+1. Client loads C2Profile, Waddle Scripts, and Build Scripts
 2. Client connects to DuckHouse
-3. Client loads Python build scripts
-4. Client creates Duck DLL and stamps with DuckHouse public RSA key
-5. Client transforms Duck DLL into PIC DLL
-6. Client stamps PIC DLL into an Egg (if stageless, otherwise PIC DLL is hosted on DuckHouse)
-7. Egg is delivered to target
-8. Egg hatches and loads Duck PIC DLL which registers to Duckhouse
-9. Client tasks Duck
+3  Client creates Duck DLL and stamps with DuckHouse public RSA key
+4. Client transforms Duck DLL into PIC DLL
+5. Client stamps PIC DLL into an Egg (URI is staged)
+6. Egg is delivered to target
+7. Egg hatches and loads Duck PIC DLL which registers to Duckhouse
+8. Client tasks Duck
 
 > May decide to move src building to DuckHouse
 
