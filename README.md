@@ -17,14 +17,15 @@ A Command and Control framework inspired by Cobalt Strike and expanding on exper
 
 
 ### Flow
-Detailed configuration of behavoir will be set via C2Profile and Operator inputs
-1. Client connects to DuckHouse
-2. Client creates Duck DLL and stamps with DuckHouse public RSA key
-3. Client transforms Duck DLL into PIC DLL
-4. Client stamps PIC DLL into an Egg (if stageless, otherwise PIC DLL is hosted on DuckHouse)
-5. Egg is delivered to target
-6. Egg hatches and loads Duck PIC DLL which registers to Duckhouse
-7. Client tasks Duck
+1. Client loads C2Profile and Waddle Scripts
+2. Client connects to DuckHouse
+3. Client loads Python build scripts
+4. Client creates Duck DLL and stamps with DuckHouse public RSA key
+5. Client transforms Duck DLL into PIC DLL
+6. Client stamps PIC DLL into an Egg (if stageless, otherwise PIC DLL is hosted on DuckHouse)
+7. Egg is delivered to target
+8. Egg hatches and loads Duck PIC DLL which registers to Duckhouse
+9. Client tasks Duck
 
 > May decide to move src building to DuckHouse
 
