@@ -1,10 +1,6 @@
 # QuackC2
 ### About
-My next Command and Control framework using lessons learned from [IronHelm](https://github.com/vlcakx90/IronHelm). 
-- Will use the  [C2 Comms Spec: OST-C2-Spec](https://github.com/rasta-mouse/ost-c2-spec?tab=readme-ov-file#link-pass-thru) for communication/command specification.
-- Will generally follow the design of [Cobalt Strike](https://www.cobaltstrike.com/)
-- Will be partly or entirely written in Rust
-- Serve as a project for me to learn and have fun :)
+A Command and Control framework inspired by Cobalt Strike and expanding on experience building [IronHelm](https://github.com/vlcakx90/IronHelm) (my first C2), this project is built using Rust, C, and C# and leverages the [C2 Comms Spec: OST-C2-Spec](https://github.com/rasta-mouse/ost-c2-spec?tab=readme-ov-file#link-pass-thru), C2 profiles for configurability, position independent DLL (PIC DLL), and aggressor-like scripting.
 
 # Proposed Design
 ### Project Layout
@@ -16,6 +12,9 @@ My next Command and Control framework using lessons learned from [IronHelm](http
 |  Egg | Stager | Rust stager that loads the PIC DLL |
 |  Client | Client | Cross-platform Rust Desktop client for Teamserver |
 |  Waddle Script | Aggressor Script | Scripting new behavior (commands) using Lua |
+|  Build Scripts | NA | Python scripts for building source |
+|  Profiles | C2 Profile | Profiles for configuring comm and src builds |
+
 
 ### Flow
 Detailed configuration of behavoir will be set via C2Profile and Operator inputs
@@ -26,6 +25,8 @@ Detailed configuration of behavoir will be set via C2Profile and Operator inputs
 5. Egg is delivered to target
 6. Egg hatches and loads Duck PIC DLL which registers to Duckhouse
 7. Client tasks Duck
+
+> May decide to move src building to DuckHouse
 
 # First Version
 ### Comms
@@ -48,12 +49,12 @@ Implements comms and commands from [C2 Comms Spec: OST-C2-Spec](https://github.c
 ### PIC DLL Loaders
 Will utilitze both of these projects to turn a DLL into PIC DLL (PIC reflective loading)
 - [Donut](https://github.com/TheWover/donut): good out-of-the-box utility
-- [Crystal Palace](https://tradecraftgarden.org/index.html): provides great extensibility
+- ~~[Crystal Palace](https://tradecraftgarden.org/index.html): provides great extensibility~~ moved to future versions
 
 ### Egg
 Mix of open-source and ports of them to Rust
--  C via [The Garden](https://tradecraftgarden.org/tradecraft.html)
-- Varrious Rust ports of known techniques
+- Rust ports of known techniques
+-  ~~C via [The Garden](https://tradecraftgarden.org/tradecraft.html)~~ moved to future versions
 - Built as EXE, DLL, and Service EXE
 
 ### Client
@@ -61,7 +62,7 @@ A Cobalt Strike style cross-platform desktop client using Rust with [Tauri](http
 - GUI will be designed in [Figma](https://www.figma.com/) and a TBA AI tool will be utilitzed to create the HTML/CSS and some JavaScript (because I am allergic to HTML/CSS)
 - availble Duck commands will be loaded from a YAML file
 
-Commands in YAML may look like
+Example: Commands in YAML to be loaded by Client
 ```yaml
 ﻿- Alias: cp
   Description: cp file from src to dst with optional force
@@ -69,14 +70,14 @@ Commands in YAML may look like
   Code: 0
   Arguments:
     - Key: source
-      DataType: 0
+	  DataType: 0
       Optional: false
     - Key: destination
-      DataType: 0
+	  DataType: 0
       Optional: false
-    - Key: force
-      DataType: 3
-      Optional: true
+	- Key: force
+	  DataType: 3
+	  Optional: true
 
 ###### C2 Comms Spec: OST-C2-Spec ######
 #FILE-COPY-REQ {
@@ -86,7 +87,7 @@ Commands in YAML may look like
 #}
 ```
 
-Rust structs example for deserialization
+Example: Rust structs for deserialization
 ```Rust
 use serde::Deserialize;
 use std::fs;
@@ -117,42 +118,21 @@ enum DataType {
 ```
 
 #### Waddle Script: Teaching a Duck How to Walk
-Use [rlua](https://docs.rs/rlua/latest/rlua/) to load Lua scripts to define new behavior (commands)
+Use [mlua](https://docs.rs/mlua/latest/mlua/) to load Lua scripts to define new behavior (commands)
 - scripts will be able to access specific Rust functions that have been exposed to Lua
 - operator supplied commands will be searched in the loaded commands list that is initialized with a yaml file (explained above in Client section), this list will include loaded waddle scripts
 
-Waddle Script Example (Lue)
-```LUA
-hello_world(42)
-```
-
-Waddle Script Loading and Running (Rust)
-```Rust
-use rlua::{Lua, Result};
-use std::fs;
-    // Lua instance
-    let lua = Lua::new();
-    // Exposed Rust Function
-    let hello_world = lua.create_function(|_, num: i32| {
-        println!("Hello, World! The number is: {}", num);
-        Ok(())
-    })?;
-    // Set function in Lua env
-    lua.globals().set("hello_world", hello_world)?;
-	// Read Lua script
-	et lua_script = fs::read_to_string("waddle.lua")
-        .expect("Failed to read Waddle script file");
-    // Run Lua script
-	lua.load(&lua_script).exec()?;
-```
-
 Waddle Scripts can be added to commands list by executing a 'register' function in them (Similar to how Cobalt Strike does it) that can simply add it to an existing list
-```C
-# Cobalt Strike Example
-beacon_remote_exploit_register("dcom", "x64", "Use DCOM to run a Beacon payload", &invoke_dcom);
-```
+- can run a specific function from rust (instead of the whole script, like a register script)
 
-#### C2Profile
+#### Build Scripts
+Use [pyo3](https://docs.rs/pyo3/latest/pyo3/) to load Python scripts ([from_code](https://docs.rs/pyo3/0.15.1/pyo3/types/struct.PyModule.html#method.from_code)) to build each project source
+- this allows for building project source via cmdline in the same way as the client
+- scripts will not be accessing exposed rust functions but instead return project source
+- will take in listener details and C2Profile data
+
+
+#### Profiles
 YAML file to hold configuration for DuckHouse, Egg, and Duck
 - set paths for listeners
 - format of Get/Post requests and where data is placed
@@ -161,6 +141,10 @@ YAML file to hold configuration for DuckHouse, Egg, and Duck
 - post-ex (ex. spawn-to)
 
 # Later Version Ideas
+#### Build
+- [Crystal Palace](https://tradecraftgarden.org/index.html)
+-  [The Garden](https://tradecraftgarden.org/tradecraft.html)
+
 #### Opsec
 - String encryption for Egg
 - Encrypt Duck
