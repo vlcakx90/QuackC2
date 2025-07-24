@@ -1,5 +1,4 @@
 # QuackC2
-### About
 A Command and Control framework inspired by Cobalt Strike and expanding on experience building [IronHelm](https://github.com/vlcakx90/IronHelm) (my first C2), this project is built using Rust, C, and C# and leverages the [C2 Comms Spec: OST-C2-Spec](https://github.com/rasta-mouse/ost-c2-spec?tab=readme-ov-file#link-pass-thru), C2 profiles for configurability, position independent DLL (PIC DLL), and aggressor-like scripting.
 
 # Proposed Design
